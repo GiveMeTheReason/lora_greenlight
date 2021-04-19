@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# Build and push docker-image
+# Needs:
+#   * env.DOCKER_IMAGE
+#   * registry-auth
+
+set -eu -o pipefail
+
+CALLED_AS=$BASH_SOURCE
+SCRIPT_NAME=$(basename "$CALLED_AS")
+SCRIPT_DIR=$(dirname "$CALLED_AS")
+
+pushd "$SCRIPT_DIR/../"
+
+docker build --force-rm --no-cache --tag "$DOCKER_IMAGE" .
+
+echo "Docker image: $DOCKER_IMAGE"
+docker image ls "$DOCKER_IMAGE"
+
+#docker push "$DOCKER_IMAGE"
+
+echo "."
+echo "Image pushed as: $DOCKER_IMAGE"
+echo "."

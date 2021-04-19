@@ -1,0 +1,22 @@
+---
+before_script:
+# https://forum.gitlab.com/t/ssh-keys-with-alpine-docker/9727/3
+  - set -eu -o pipefail
+
+stages:
+  - artifact
+
+
+docker/pr:
+  image: docker:stable
+  stage: artifact
+  interruptible: true
+  services:
+    - docker:dind
+  variables:
+    DOCKER_IMAGE: "${CI_REGISTRY_IMAGE}/tg-lora-bot:${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHORT_SHA}"
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - ./ci/release-image
+  only:
+    - merge_requests
